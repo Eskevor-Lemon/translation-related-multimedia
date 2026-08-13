@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 音频分享播放器</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .player-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
+        .disc {
+            width: 150px;
+            height: 150px;
+            background: #333;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 5px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .disc-inner {
+            width: 40px;
+            height: 40px;
+            background: #e0c3fc;
+            border-radius: 50%;
+        }
+        h2 { margin: 10px 0 5px; color: #333; font-size: 1.4rem; word-break: break-all; }
+        p { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+        audio { width: 100%; outline: none; }
+        .error-msg { color: #ff4d4f; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="player-card">
+        <div class="disc"><div class="disc-inner"></div></div>
+        <h2 id="fileName">正在加载...</h2>
+        <p>GitHub 媒体库音频分享</p>
+        
+        <div id="error" class="error-msg">未检测到音频文件名，请检查链接</div>
+        
+        <audio id="audioPlayer" controls autoplay>
+            您的浏览器不支持音频播放。
+        </audio>
+    </div>
+
+    <script>
+        // 🛠️ 配置区域：请将此处修改为你的 GitHub 用户名和仓库名
+        const GITHUB_USER = "Eskevor-Lemon";
+        const REPO_NAME = "translation-related-multimedia";
+        const BRANCH = "main";
+        const FOLDER_NAME = "music"; // 存放音频的文件夹名（需与库中一致，如果没有文件夹可留空 ""）
+
+        // 解析 URL 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileName = urlParams.get('file');
+
+        const nameElement = document.getElementById('fileName');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const errorElement = document.getElementById('error');
+
+        if (fileName) {
+            nameElement.textContent = decodeURIComponent(fileName);
+            // 拼接 jsDelivr CDN 加速直链
+            const fileUrl = `https://jsdelivr.net{GITHUB_USER}/${REPO_NAME}@${BRANCH}/${FOLDER_NAME ? FOLDER_NAME + '/' : ''}${fileName}`;
+            audioPlayer.src = fileUrl;
+        } else {
+            nameElement.style.display = 'none';
+            audioPlayer.style.display = 'none';
+            errorElement.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
