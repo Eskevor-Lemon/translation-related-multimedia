@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 视频分享播放器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            background: #111;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .video-info {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0));
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .error-msg { color: #ff4d4f; font-size: 1.2rem; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="error" class="error-msg">❌ 未检测到视频文件名，请检查链接</div>
+
+    <div class="video-container" id="videoBox">
+        <div class="video-info" id="videoTitle">正在加载视频...</div>
+        <video id="videoPlayer" controls autoplay>
+            您的浏览器不支持视频播放。
+        </video>
+    </div>
+
+    <script>
+        // 🛠️ 配置区域：请将此处修改为你的 GitHub 用户名和仓库名
+        const GITHUB_USER = "Eskevor-Lemon";
+        const REPO_NAME = "translation-related-multimedia";
+        const BRANCH = "main";
+        const FOLDER_NAME = "videos"; // 存放视频的文件夹名（需与库中一致，如果没有文件夹可留空 ""）
+
+        // 解析 URL 参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const fileName = urlParams.get('file');
+
+        const titleElement = document.getElementById('videoTitle');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoBox = document.getElementById('videoBox');
+        const errorElement = document.getElementById('error');
+
+        if (fileName) {
+            titleElement.textContent = decodeURIComponent(fileName);
+            // 拼接 jsDelivr CDN 加速直链
+            const fileUrl = `https://jsdelivr.net{GITHUB_USER}/${REPO_NAME}@${BRANCH}/${FOLDER_NAME ? FOLDER_NAME + '/' : ''}${fileName}`;
+            videoPlayer.src = fileUrl;
+
+            // 播放时自动隐藏顶部标题框
+            videoPlayer.addEventListener('play', () => {
+                setTimeout(() => { titleElement.style.opacity = '0'; }, 2000);
+            });
+            videoPlayer.addEventListener('pause', () => {
+                titleElement.style.opacity = '1';
+            });
+        } else {
+            videoBox.style.display = 'none';
+            errorElement.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
