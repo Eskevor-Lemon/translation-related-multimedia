@@ -13,7 +13,6 @@
 
         html, body {
             margin: 0;
-            padding: 0;
             width: 100%;
             min-height: 100%;
             background: #111;
@@ -36,10 +35,11 @@
             width: 100%;
         }
 
-        .error {
-            color: white;
-            text-align: center;
-            padding: 30px;
+        #message {
+            color: #ccc;
+            margin-top: 15px;
+            font-size: 14px;
+            word-break: break-all;
         }
     </style>
 </head>
@@ -47,12 +47,15 @@
 <body>
 
 <div class="player-container">
+
     <audio
         id="player"
         controls
         preload="metadata">
-        Your browser does not support HTML5 audio.
     </audio>
+
+    <div id="message"></div>
+
 </div>
 
 <script>
@@ -60,13 +63,24 @@
     const src = params.get("src");
 
     const player = document.getElementById("player");
+    const message = document.getElementById("message");
 
-    if (src) {
-        player.src = src;
-        player.load();
+    if (!src) {
+        message.textContent = "No audio file specified.";
     } else {
-        document.body.innerHTML =
-            '<div class="error">No audio file specified.</div>';
+
+        player.src = src;
+
+        player.addEventListener("loadedmetadata", () => {
+            message.textContent = "";
+        });
+
+        player.addEventListener("error", () => {
+            message.textContent =
+                "Audio failed to load: " + src;
+        });
+
+        player.load();
     }
 </script>
 
